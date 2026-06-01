@@ -14,6 +14,10 @@
 ;; 2. Basics & UI
 (tool-bar-mode 0)
 (menu-bar-mode 0)
+(tab-bar-mode 1)
+(setq tab-bar-show 1)
+(setq tab-bar-new-button-show nil)
+(setq tab-bar-tab-hints t)
 (delete-selection-mode 1)
 (setq inhibit-startup-screen t)
 
@@ -29,29 +33,23 @@
 
 ;; Dashboard
 (use-package dashboard
-  :ensure t
+  :init
+
+  (setq initial-buffer-choice nil)
+  
+  (dashboard-setup-startup-hook)
+  
   :config
-  (dashboard-setup-startup-hook))
-
-(setq initial-buffer-choice 'dashboard-open)
-
-(setq dashboard-banner-logo-title "Welcome to Emacs")
-
-(setq dashboard-startup-banner 'logo)
-
-
-(setq dashboard-center-content t)
-
-(setq dashboard-vertically-center-content t)
-
-;; (setq dashboard-show-shortcuts nil)
-
-(setq dashboard-items '((recents   . 5)
-                        (bookmarks . 5)
-                        (projects  . 5)
-                        (registers . 5)))
-
-(setq dashboard-navigation-cycle t)
+  (setq dashboard-banner-logo-title "Welcome to Emacs")
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-projects-backend 'project-el)
+  (setq dashboard-center-content t)
+  (setq dashboard-vertically-center-content t)
+  (setq dashboard-navigation-cycle t)
+  (setq dashboard-items '((recents   . 5)
+                          (bookmarks . 5)
+                          (projects  . 5)
+                          (registers . 5))))
 
 ;; 3. Environment & Paths
 (add-to-list 'exec-path (expand-file-name "~/go/bin"))
@@ -176,7 +174,27 @@
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)
          ("C-c m c" . mc/edit-lines)))
-;; 8. Version Control (Magit)
+
+;; 8. Dired Sidebar
+(use-package dired-sidebar
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode))))
+  :config
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+
+  (setq dired-sidebar-subtree-line-prefix ">")
+  ;; (setq dired-sidebar-theme 'vscode)
+  (setq dired-sidebar-use-term-integration t)
+  (setq dired-sidebar-use-custom-font t))
+
+;; 9. Version Control (Magit)
 (use-package magit
   :ensure t
   :bind ("C-x g" . magit-status))
