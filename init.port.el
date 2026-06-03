@@ -1,4 +1,3 @@
-
 ;; 1. Package Manager Bootstrap
 (require 'package)
 (add-to-list 'package-archives
@@ -15,6 +14,7 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (tab-bar-mode 1)
+(global-whitespace-mode 1)
 (setq tab-bar-show 1)
 (setq tab-bar-new-button-show nil)
 (setq tab-bar-tab-hints t)
@@ -31,6 +31,11 @@
 
 (move-text-default-bindings)
 
+;; (setq-default indent-tabs-mode nil)
+;; (setq-default tab-width 4)
+;; (setq indent-line-function 'insert-tab)
+(setq whitespace-style '(face spaces tabs trailing space-mark tab-mark))
+
 ;; Dashboard
 (use-package dashboard
   :init
@@ -38,7 +43,7 @@
   (setq initial-buffer-choice nil)
   
   (dashboard-setup-startup-hook)
-  
+
   :config
   (setq dashboard-banner-logo-title "Welcome to Emacs")
   (setq dashboard-startup-banner 'logo)
