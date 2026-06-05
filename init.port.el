@@ -14,6 +14,10 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (tab-bar-mode 1)
+
+(setq kill-whole-line t)
+(setq use-short-answers t)
+
 (global-whitespace-mode 1)
 (setq tab-bar-show 1)
 (setq tab-bar-new-button-show nil)
