@@ -25,29 +25,48 @@
 (delete-selection-mode 1)
 (setq inhibit-startup-screen t)
 
-(setq initial-buffer-choice nil)
+(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
-(global-set-key (kbd "C-c d") #'duplicate-line)
+(global-set-key (kbd "C-c d") #'duplicate-dwim)
 
 (set-face-attribute 'default nil :height 120)
 (global-display-line-numbers-mode)
 (setq display-line-numbers-type 'relative)
 
-(move-text-default-bindings)
+(use-package move-text
+  :config
+  (move-text-default-bindings))
 
-;; (setq-default indent-tabs-mode nil)
-;; (setq-default tab-width 4)
-;; (setq indent-line-function 'insert-tab)
 (setq whitespace-style '(face spaces tabs trailing space-mark tab-mark))
+
+;; Ido
+(use-package ido
+  :init
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  :config
+  (ido-mode 1))
+
+(use-package ido-vertical-mode
+  :after ido
+  :init
+  (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
+  :config
+  (ido-vertical-mode 1))
+
+(use-package smex
+  :after ido
+  :bind (("M-x" . smex)
+         ("M-X" . smex-major-mode-commands)
+         ("C-c C-c M-x" . execute-extended-command))
+  :init
+  (smex-initialize))
 
 ;; Dashboard
 (use-package dashboard
   :init
-
   (setq initial-buffer-choice nil)
-  
   (dashboard-setup-startup-hook)
-
   :config
   (setq dashboard-banner-logo-title "Welcome to Emacs")
   (setq dashboard-startup-banner 'logo)
@@ -71,7 +90,6 @@
 
 ;; 4. Themes
 (use-package gruber-darker-theme
-  :ensure t
   :config
   (load-theme 'gruber-darker t))
 
@@ -86,108 +104,47 @@
   :config
   (setq company-idle-delay 0.2))
 
-;; 6. LSP & Development
+;; 6. LSP & Development Base
 (use-package eglot
   :bind (:map eglot-mode-map
-	      ("C-c l a" . eglot-code-actions)
-	      ("C-c l r" . eglot-rename)
-	      ("C-c l h" . eldoc)
-	      ("C-c l f" . eglot-format)
-	      ("C-c l F" . eglot-format-buffer)
-	      ("C-c l d" . xref-find-definitions-at-mouse)
-	      ("C-c l R" . eglot-reconnect)))
+              ("C-c l a" . eglot-code-actions)
+              ("C-c l r" . eglot-rename)
+              ("C-c l h" . eldoc)
+              ("C-c l f" . eglot-format)
+              ("C-c l F" . eglot-format-buffer)
+              ("C-c l d" . xref-find-definitions-at-mouse)
+              ("C-c l R" . eglot-reconnect)))
 
-(require 'project)
+(use-package consult)
 
-(use-package go-mode
-  :hook (go-mode . eglot-ensure)
-  :config
-  (add-hook 'go-mode-hook (lambda ()
-                            (add-hook 'before-save-hook #'gofmt-before-save nil t))))
-
-(use-package emmet-mode
-  :ensure t
-  :hook (html-mode sgml-mode css-mode web-mode))
-
-;; Ensure company works in eglot buffers
-(add-hook 'eglot-managed-mode-hook #'company-mode)
-
-(setq compilation-ask-about-save nil)
-
-;; C# stuff
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-	       '(csharp-mode . ("csharp-ls")))
-  (add-to-list 'eglot-server-programs
-	       '(csharp-ts-mode .("csharp-ls"))))
-
-(use-package csharp-mode
-  :hook ((csharp-mode) . eglot-ensure))
-
-
-(add-hook 'csharp-mode-hook 'eglot-ensure)
+(use-package consult-eglot
+  :after (consult eglot)
+  :bind (:map eglot-mode-map
+              ("C-c s s" . consult-eglot-symbols)))
 
 (use-package smartparens
-  :ensure t
   :config
   (smartparens-global-mode t))
 
-(defun my/find-elixir-ls-path ()
-  "Find the elixir-ls language server path."
-  (let ((archive-path (expand-file-name "~/.mix/archives/hex-elixir_ls/elixir_ls")))
-    (if (file-exists-p archive-path)
-        archive-path
-      ;; Fallback: try common installation paths
-      (or (executable-find "elixir-ls")
-          (expand-file-name "~/.elixir-ls")))))
-
-(setq my/elixir-ls-path (my/find-elixir-ls-path))
-
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               `(elixir-mode . (,(or my/elixir-ls-path "elixir-ls")
-                                "language_server.sh"))))
-
-(add-hook 'elixir-mode-hook #'eglot-ensure)
-(add-hook 'erlang-mode-hook #'eglot-ensure)
-
-(add-hook 'elixir-mode-hook #'eglot-format-on-save-mode)
-(add-hook 'erlang-mode-hook #'eglot-format-on-save-mode)
-
-(use-package elixir-mode
-  :ensure t
-  :mode ("\\.exs?\\'" "\\.eex\\'" "\\.heex\\'")
-  :hook (elixir-mode . mix-init)
-  :hook (elixir-mode . exunit-init))
-
-(use-package web-mode
-  :ensure t
-  :mode ("\\.html?\\'" "\\.ejs\\'" "\\.erb\\'" "\\.mustache\\'" "\\.haml\\'")
-  :config
-  (add-to-list 'web-mode-engine-alist '("elixir" . "\\.(eex|heex)\\'")))
-
-(use-package mix
-  :ensure t
-  :commands (mix-init mix-run mix-test))
-
-(use-package exunit
-  :ensure t
-  :commands (exunit-init exunit-run))
-
+;; Ensure company works in eglot buffers
 (add-hook 'eglot-managed-mode-hook #'company-mode)
 (setq compilation-ask-about-save nil)
 
-;; 7. Multiple Cursors
+(use-package project)
+
+;; 7. Load Programming Modes
+(load (expand-file-name "init-prog.el" user-emacs-directory))
+
+;; 8. Multiple Cursors
 (use-package multiple-cursors
   :bind (("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)
          ("C-c m c" . mc/edit-lines)))
 
-;; 8. Dired Sidebar
+;; 9. Dired Sidebar
 (use-package dired-sidebar
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-  :ensure t
   :commands (dired-sidebar-toggle-sidebar)
   :init
   (add-hook 'dired-sidebar-mode-hook
@@ -197,17 +154,13 @@
   :config
   (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
   (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-
-  (setq dired-sidebar-subtree-line-prefix ">")
-  ;; (setq dired-sidebar-theme 'vscode)
+  (setq dired-sidebar-subtree-line-prefix "> ")
   (setq dired-sidebar-use-term-integration t)
   (setq dired-sidebar-use-custom-font t))
 
-;; 9. Version Control (Magit)
+;; 10. Version Control
 (use-package magit
-  :ensure t
   :bind ("C-x g" . magit-status))
 
 (use-package magit-todos
-  :ensure t
   :hook (magit-mode . magit-todos-mode))
