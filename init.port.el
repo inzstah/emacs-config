@@ -25,6 +25,7 @@
 (delete-selection-mode 1)
 (setq inhibit-startup-screen t)
 
+
 (global-set-key (kbd "C-c d") #'duplicate-dwim)
 
 (set-face-attribute 'default nil :height 120)
@@ -38,7 +39,7 @@
 
 (setq whitespace-style '(face spaces tabs trailing space-mark tab-mark))
 
-;; Vertico
+;; Vertico & such
 (use-package vertico
   :ensure t
   :init
@@ -57,6 +58,28 @@
   :ensure t
   :init
   (savehist-mode))
+
+;; Floating Minibuffer Completion
+(use-package posframe
+  :ensure t)
+
+(use-package vertico-posframe
+  :ensure t
+  :after vertico
+  :init
+  (vertico-posframe-mode 1)
+  :custom
+  ;; Visual polish
+  (vertico-posframe-parameters
+   '((left-fringe . 8)
+     (right-fringe . 8)
+     (internal-border-width . 1))))
+
+(use-package marginalia
+  :ensure t
+  :after vertico
+  :init
+  (marginalia-mode))
 
 ;; Dashboard
 (use-package dashboard
@@ -114,7 +137,7 @@
   :ensure t)
 
 (use-package consult-eglot
-  :esure t
+  :ensure t
   :after (consult eglot)
   :bind (:map eglot-mode-map
               ("C-c s s" . consult-eglot-symbols)))
