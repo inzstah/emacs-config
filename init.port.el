@@ -25,8 +25,6 @@
 (delete-selection-mode 1)
 (setq inhibit-startup-screen t)
 
-(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-
 (global-set-key (kbd "C-c d") #'duplicate-dwim)
 
 (set-face-attribute 'default nil :height 120)
@@ -39,33 +37,30 @@
 
 (setq whitespace-style '(face spaces tabs trailing space-mark tab-mark))
 
-;; Ido
-(use-package ido
+;; Vertico
+(use-package vertico
+  :ensure t
   :init
-  (setq ido-enable-flex-matching t)
-  (setq ido-everywhere t)
-  :config
-  (ido-mode 1))
+  (vertico-mode)
+  :custom
+  (vertico-cycle t))
 
-(use-package ido-vertical-mode
-  :after ido
-  :init
-  (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
-  :config
-  (ido-vertical-mode 1))
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
 
-(use-package smex
-  :after ido
-  :bind (("M-x" . smex)
-         ("M-X" . smex-major-mode-commands)
-         ("C-c C-c M-x" . execute-extended-command))
+(use-package savehist
+  :ensure t
   :init
-  (smex-initialize))
+  (savehist-mode))
 
 ;; Dashboard
 (use-package dashboard
   :init
-  (setq initial-buffer-choice nil)
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
   (dashboard-setup-startup-hook)
   :config
   (setq dashboard-banner-logo-title "Welcome to Emacs")
@@ -93,11 +88,7 @@
   :config
   (load-theme 'gruber-darker t))
 
-;; 5. Completion (Icomplete + Company)
-(icomplete-mode 1)
-(defun my-icomplete-styles ()
-  (setq-local completion-styles '(initials flex)))
-(add-hook 'icomplete-minibuffer-setup-hook 'my-icomplete-styles)
+;; 5. Completion (Company)
 
 (use-package company
   :hook (after-init . global-company-mode)
