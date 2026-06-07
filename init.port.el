@@ -32,6 +32,7 @@
 (setq display-line-numbers-type 'relative)
 
 (use-package move-text
+  :ensure t
   :config
   (move-text-default-bindings))
 
@@ -59,6 +60,7 @@
 
 ;; Dashboard
 (use-package dashboard
+  :ensure t
   :init
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
   (dashboard-setup-startup-hook)
@@ -91,12 +93,14 @@
 ;; 5. Completion (Company)
 
 (use-package company
+  :ensure t
   :hook (after-init . global-company-mode)
   :config
   (setq company-idle-delay 0.2))
 
 ;; 6. LSP & Development Base
 (use-package eglot
+  :ensure t
   :bind (:map eglot-mode-map
               ("C-c l a" . eglot-code-actions)
               ("C-c l r" . eglot-rename)
@@ -106,14 +110,17 @@
               ("C-c l d" . xref-find-definitions-at-mouse)
               ("C-c l R" . eglot-reconnect)))
 
-(use-package consult)
+(use-package consult
+  :ensure t)
 
 (use-package consult-eglot
+  :esure t
   :after (consult eglot)
   :bind (:map eglot-mode-map
               ("C-c s s" . consult-eglot-symbols)))
 
 (use-package smartparens
+  :ensure t
   :config
   (smartparens-global-mode t))
 
@@ -121,13 +128,15 @@
 (add-hook 'eglot-managed-mode-hook #'company-mode)
 (setq compilation-ask-about-save nil)
 
-(use-package project)
+(use-package project
+  :ensure t)
 
 ;; 7. Load Programming Modes
 (load (expand-file-name "init-prog.el" user-emacs-directory))
 
 ;; 8. Multiple Cursors
 (use-package multiple-cursors
+  :ensure t
   :bind (("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)
@@ -135,6 +144,7 @@
 
 ;; 9. Dired Sidebar
 (use-package dired-sidebar
+  :ensure t
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
   :commands (dired-sidebar-toggle-sidebar)
   :init
@@ -151,7 +161,9 @@
 
 ;; 10. Version Control
 (use-package magit
+  :ensure t
   :bind ("C-x g" . magit-status))
 
 (use-package magit-todos
+  :ensure t
   :hook (magit-mode . magit-todos-mode))
