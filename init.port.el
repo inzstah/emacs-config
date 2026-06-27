@@ -10,6 +10,43 @@
 
 (setq use-package-always-ensure t)
 
+;; God Mode (Modal editing)
+(use-package god-mode
+  :ensure t
+  :bind
+  (("<escape>" . god-local-mode)
+   :map god-local-mode-map
+   ("i" . god-local-mode))
+
+  :custom
+  (god-mode-enable-auto-repeat t)
+
+  :config
+  ;; Allow repeating navigation keys seamlessly
+  ;; (add-to-list 'god-built-in-repeatable-commands 'backward-button)
+  ;; (add-to-list 'god-built-in-repeatable-commands 'forward-button)
+
+  ;; Exclude buffers that rely on single-key native commands
+  (dolist (mode '(dired-mode magit-status-mode magit-log-mode magit-diff-mode))
+    (add-to-list 'god-exempt-major-modes mode))
+
+  ;; Catch-all for dynamically spawned Magit sub-buffers
+  (add-to-list 'god-exempt-predicates
+               (lambda () (derived-mode-p 'magit-mode)))
+
+  ;; Dynamic visual indicator in the mode-line
+  (defun my-god-mode-update-indicator ()
+    (if god-local-mode
+        (set-face-attribute 'mode-line nil :background "DarkGoldenrod" :foreground "white")
+      (face-spec-set 'mode-line (face-user-default-spec 'mode-line))))
+
+  (add-hook 'god-mode-enabled-hook #'my-god-mode-update-indicator)
+  (add-hook 'god-mode-disabled-hook #'my-god-mode-update-indicator)
+
+  ;; Translates internal shortcuts visually if you use which-key
+  (with-eval-after-load 'which-key
+    (which-key-enable-god-mode-support)))
+
 ;; 2. Basics & UI
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -27,6 +64,8 @@
 
 
 (global-set-key (kbd "C-c d") #'duplicate-dwim)
+(global-set-key (kbd "C-;") 'comment-line)
+(global-set-key (kbd "C-z") 'undo)
 
 (set-face-attribute 'default nil :height 120)
 (global-display-line-numbers-mode)
