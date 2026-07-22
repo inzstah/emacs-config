@@ -142,8 +142,12 @@
 (add-to-list 'exec-path (expand-file-name "~/go/bin"))
 (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/go/bin")))
 
+(add-to-list 'exec-path (expand-file-name "~/.dotnet/tools"))
+(setenv "PATH" (concat (expand-file-name "~/.dotnet/tools") ":" (getenv "PATH")))
+
+
 (use-package exec-path-from-shell
-  :if (memq window-system '(mac ns x))
+  :if (memq window-system '(mac ns x pgtk))
   :config
   (exec-path-from-shell-initialize))
 
