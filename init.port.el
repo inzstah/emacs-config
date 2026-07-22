@@ -48,6 +48,7 @@
     (which-key-enable-god-mode-support)))
 
 ;; 2. Basics & UI
+(setopt x-gtk-resize-child-frames 'resize)
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (tab-bar-mode 1)
