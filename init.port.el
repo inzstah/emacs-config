@@ -110,6 +110,7 @@
   (vertico-posframe-mode 1)
   :custom
   ;; Visual polish
+  (vertico-posframe-poshandler #'posframe-poshandler-frame-bottom-right-corner)
   (vertico-posframe-parameters
    '((left-fringe . 8)
      (right-fringe . 8)
@@ -222,7 +223,7 @@
   :config
   (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
   (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-  (setq dired-sidebar-subtree-line-prefix "> ")
+  (setq dired-sidebar-subtree-line-prefix "+")
   (setq dired-sidebar-use-term-integration t)
   (setq dired-sidebar-use-custom-font t))
 
