@@ -5,6 +5,15 @@
   (add-hook 'go-mode-hook (lambda ()
                             (add-hook 'before-save-hook #'gofmt-before-save nil t))))
 
+;; Rust
+(use-package rust-mode
+  :ensure t
+  :hook (rust-mode . eglot-ensure))
+
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((rust-ts-mode rust-mode) . ("rustup" "run" "stable" "rust-analyzer"))))
+
 ;; Web / HTML
 (use-package web-mode
   :mode ("\\.html?\\'" "\\.ejs\\'" "\\.erb\\'" "\\.mustache\\'" "\\.haml\\'")

@@ -67,6 +67,15 @@
 (global-set-key (kbd "C-c d") #'duplicate-dwim)
 (global-set-key (kbd "C-;") 'comment-line)
 (global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "<f5>") 'recompile)
+
+;; Make sure keybindings works with russian keyboard layout
+(use-package reverse-im
+  :ensure t
+  :custom
+  (reverse-im-input-methods '("russian-computer"))
+  :config
+  (reverse-im-mode t))
 
 (set-face-attribute 'default nil :height 120)
 (global-display-line-numbers-mode)
