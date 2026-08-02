@@ -37,7 +37,7 @@
   ;; Dynamic visual indicator in the mode-line
   (defun my-god-mode-update-indicator ()
     (if god-local-mode
-        (set-face-attribute 'mode-line nil :background "DarkGoldenrod" :foreground "white")
+        (set-face-attribute 'mode-line nil :background "GoldenRod4" :foreground "white")
       (face-spec-set 'mode-line (face-user-default-spec 'mode-line))))
 
   (add-hook 'god-mode-enabled-hook #'my-god-mode-update-indicator)
@@ -52,6 +52,7 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (tab-bar-mode 1)
+(global-visual-line-mode 1)
 
 (setq kill-whole-line t)
 (setq use-short-answers t)
@@ -148,6 +149,8 @@
                           (bookmarks . 5)
                           (projects  . 5)
                           (registers . 5))))
+
+(add-hook 'server-after-make-frame-hook 'dashboard-open)
 
 ;; 3. Environment & Paths
 (add-to-list 'exec-path (expand-file-name "~/go/bin"))
