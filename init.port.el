@@ -22,9 +22,6 @@
   (god-mode-enable-auto-repeat t)
 
   :config
-  ;; Allow repeating navigation keys seamlessly
-  (add-to-list 'god-built-in-repeatable-commands 'backward-button)
-  (add-to-list 'god-built-in-repeatable-commands 'forward-button)
 
   ;; Exclude buffers that rely on single-key native commands
   (dolist (mode '(dired-mode magit-status-mode magit-log-mode magit-diff-mode))
@@ -63,7 +60,6 @@
 (setq tab-bar-tab-hints t)
 (delete-selection-mode 1)
 (setq inhibit-startup-screen t)
-
 
 (global-set-key (kbd "C-c d") #'duplicate-dwim)
 (global-set-key (kbd "C-;") 'comment-line)
