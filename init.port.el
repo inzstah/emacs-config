@@ -23,8 +23,8 @@
 
   :config
   ;; Allow repeating navigation keys seamlessly
-  ;; (add-to-list 'god-built-in-repeatable-commands 'backward-button)
-  ;; (add-to-list 'god-built-in-repeatable-commands 'forward-button)
+  (add-to-list 'god-built-in-repeatable-commands 'backward-button)
+  (add-to-list 'god-built-in-repeatable-commands 'forward-button)
 
   ;; Exclude buffers that rely on single-key native commands
   (dolist (mode '(dired-mode magit-status-mode magit-log-mode magit-diff-mode))
@@ -197,7 +197,7 @@
   :ensure t
   :after (consult eglot)
   :bind (:map eglot-mode-map
-              ("C-c s s" . consult-eglot-symbols)))
+              ("C-c s" . consult-eglot-symbols)))
 
 (use-package smartparens
   :ensure t
