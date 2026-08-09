@@ -10,6 +10,10 @@
 
 (setq use-package-always-ensure t)
 
+;; Themes
+(use-package gruber-darker-theme
+  :ensure t)
+
 ;; God Mode (Modal editing)
 (use-package god-mode
   :ensure t
@@ -207,8 +211,9 @@
 (use-package project
   :ensure t)
 
-;; 7. Load Programming Modes
+;; 7. Load Side Modes
 (load (expand-file-name "init-prog.el" user-emacs-directory))
+(load (expand-file-name "init-org.el" user-emacs-directory))
 
 ;; 8. Multiple Cursors
 (use-package multiple-cursors
