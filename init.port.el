@@ -133,33 +133,62 @@
   (marginalia-mode))
 
 ;; Dashboard
+(use-package page-break-lines
+  :ensure t
+  :init
+  (global-page-break-lines-mode 1)
+  :config
+  (setq page-break-lines-char ?─))
+
 (use-package dashboard
   :ensure t
   :init
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-  (dashboard-setup-startup-hook)
   :config
+  (setq dashboard-page-separator "\n\f\n")
+
+  (setq dashboard-set-navigator t)
+
+  (setq dashboard-startupify-list '(dashboard-insert-banner
+				    dashboard-insert-newline
+                                    dashboard-insert-banner-title
+                                    dashboard-insert-newline
+                                    dashboard-insert-navigator
+                                    dashboard-insert-newline
+                                    dashboard-insert-items
+                                    dashboard-insert-newline
+                                    dashboard-insert-footer))
+
+  (setq dashboard-navigator-buttons
+        `(
+          ((nil "📦 Packages" "Manage Emacs packages"
+                (lambda (&rest _) (list-packages)) 'default)
+           (nil "✉️ Mail" "Open default mail client"
+                (lambda (&rest _) (call-interactively 'compose-mail)) 'default)
+           (nil "⚙️ Settings" "Open init.port.el"
+                (lambda (&rest _) (find-file "~/.emacs.d/init.port.el")) 'default))
+          ))
+
+  (dashboard-setup-startup-hook)
   (setq dashboard-banner-logo-title "Welcome to Emacs")
   (setq dashboard-startup-banner 'logo)
   (setq dashboard-projects-backend 'project-el)
-  (setq dashboard-center-content t)
+  ;; (setq dashboard-center-content t)
   (setq dashboard-vertically-center-content t)
   (setq dashboard-navigation-cycle t)
-  (setq dashboard-items '((recents   . 5)
-                          (bookmarks . 5)
+  (setq dashboard-items '((recents   . 10)
                           (projects  . 5)
-                          (registers . 5))))
+                          (bookmarks . 5))))
+
+(with-eval-after-load 'dashboard
+  (define-key dashboard-mode-map (kbd "l") (lambda () (interactive) (list-packages)))
+  (define-key dashboard-mode-map (kbd "m") (lambda () (interactive) (call-interactively 'compose-mail)))
+  (define-key dashboard-mode-map (kbd "s") (lambda () (interactive) (find-file "~/.emacs.d/init.port.el"))))
+
 
 (add-hook 'server-after-make-frame-hook 'dashboard-open)
 
 ;; 3. Environment & Paths
-(add-to-list 'exec-path (expand-file-name "~/go/bin"))
-(setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/go/bin")))
-
-(add-to-list 'exec-path (expand-file-name "~/.dotnet/tools"))
-(setenv "PATH" (concat (expand-file-name "~/.dotnet/tools") ":" (getenv "PATH")))
-
-
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x pgtk))
   :config
