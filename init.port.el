@@ -277,3 +277,8 @@
 (use-package magit-todos
   :ensure t
   :hook (magit-mode . magit-todos-mode))
+
+(with-eval-after-load 'magit
+  (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+
