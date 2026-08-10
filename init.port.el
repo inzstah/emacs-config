@@ -150,7 +150,7 @@
   (setq dashboard-set-navigator t)
 
   (setq dashboard-startupify-list '(dashboard-insert-banner
-				    dashboard-insert-newline
+                                    dashboard-insert-newline
                                     dashboard-insert-banner-title
                                     dashboard-insert-newline
                                     dashboard-insert-navigator
@@ -281,4 +281,8 @@
 (with-eval-after-load 'magit
   (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+(setq display-buffer-alist
+      '(("\\*magit:.*"
+         (display-buffer-reuse-window display-buffer-same-window)
+         (reusable-frames . visible))))
 
