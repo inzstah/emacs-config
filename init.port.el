@@ -36,13 +36,13 @@
                (lambda () (derived-mode-p 'magit-mode)))
 
   ;; Dynamic visual indicator in the mode-line
-  (defun my-god-mode-update-indicator ()
+  (defun my/god-mode-update-indicator ()
     (if god-local-mode
         (set-face-attribute 'mode-line nil :background "GoldenRod4" :foreground "white")
       (face-spec-set 'mode-line (face-user-default-spec 'mode-line))))
 
-  (add-hook 'god-mode-enabled-hook #'my-god-mode-update-indicator)
-  (add-hook 'god-mode-disabled-hook #'my-god-mode-update-indicator)
+  (add-hook 'god-mode-enabled-hook #'my/god-mode-update-indicator)
+  (add-hook 'god-mode-disabled-hook #'my/god-mode-update-indicator)
 
   ;; Translates internal shortcuts visually if you use which-key
   (with-eval-after-load 'which-key
@@ -167,10 +167,11 @@
                 (lambda (&rest _) (call-interactively 'compose-mail)) 'default)
            (nil "⚙️ Settings" "Open init.port.el"
                 (lambda (&rest _) (find-file "~/.emacs.d/init.port.el")) 'default))
-          ))
+	  ((nil "🗞️ Telega" "Open telega client"
+		(lambda (&rest _) (telega)) 'default))))
 
   (dashboard-setup-startup-hook)
-  (setq dashboard-banner-logo-title "Welcome to Emacs")
+  (setq dashboard-banner-logo-title "Welcome to Emacs!")
   (setq dashboard-startup-banner 'logo)
   (setq dashboard-projects-backend 'project-el)
   ;; (setq dashboard-center-content t)
@@ -243,6 +244,7 @@
 ;; 7. Load Side Modes
 (load (expand-file-name "init-prog.el" user-emacs-directory))
 (load (expand-file-name "init-org.el" user-emacs-directory))
+(load (expand-file-name "init-telega.el" user-emacs-directory))
 
 ;; 8. Multiple Cursors
 (use-package multiple-cursors
