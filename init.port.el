@@ -255,9 +255,15 @@
          ("C-c m c" . mc/edit-lines)))
 
 ;; 9. Dired Sidebar
+(use-package dired-subtree
+  :commands (dired-subtree-toggle dired-subtree-cycle)
+  :config
+  (setq dired-subtree-line-prefix " ")
+  (setq dired-subtree-use-backgrounds nil))
+
 (use-package dired-sidebar
-  :ensure t
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :ensure t
   :commands (dired-sidebar-toggle-sidebar)
   :init
   (add-hook 'dired-sidebar-mode-hook
@@ -267,9 +273,8 @@
   :config
   (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
   (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-  (setq dired-sidebar-subtree-line-prefix "+")
-  (setq dired-sidebar-use-term-integration t)
-  (setq dired-sidebar-use-custom-font t))
+
+  (setq dired-sidebar-subtree-line-prefix "+"))
 
 ;; 10. Version Control
 (use-package magit

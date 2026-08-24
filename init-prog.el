@@ -14,6 +14,18 @@
   (add-to-list 'eglot-server-programs
                '((rust-ts-mode rust-mode) . ("rustup" "run" "stable" "rust-analyzer"))))
 
+;; Guile Scheme
+(use-package geiser
+  :ensure t
+  :custom
+  (geiser-repl-skip-help-p t)
+  (geiser-mode-auto-p t))
+
+(use-package geiser-guile
+  :ensure t
+  :after geiser)
+
+
 ;; Web / HTML
 (use-package web-mode
   :mode ("\\.html?\\'" "\\.ejs\\'" "\\.erb\\'" "\\.mustache\\'" "\\.haml\\'")
