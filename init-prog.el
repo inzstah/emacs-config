@@ -1,3 +1,4 @@
+;;-*- lexical-binding: t; -*-
 ;; Go
 (use-package go-mode
   :hook (go-mode . eglot-ensure)

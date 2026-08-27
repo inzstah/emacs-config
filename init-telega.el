@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (when (fboundp 'native-comp-available-p)
   (setq native-comp-async-jobs-number (max 1 (- (num-processors) 2))))
 

@@ -1,3 +1,4 @@
+;;-*- lexical-binding: t; -*-
 ;; 1. Package Manager Bootstrap
 (require 'package)
 (add-to-list 'package-archives
@@ -255,26 +256,70 @@
          ("C-c m c" . mc/edit-lines)))
 
 ;; 9. Dired Sidebar
-(use-package dired-subtree
-  :commands (dired-subtree-toggle dired-subtree-cycle)
-  :config
-  (setq dired-subtree-line-prefix " ")
-  (setq dired-subtree-use-backgrounds nil))
+;; (use-package dired-subtree
+;;   :commands (dired-subtree-toggle dired-subtree-cycle)
+;;   :config
+;;   (setq dired-subtree-line-prefix " ")
+;;   (setq dired-subtree-use-backgrounds nil))
 
-(use-package dired-sidebar
-  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-  :ensure t
-  :commands (dired-sidebar-toggle-sidebar)
-  :init
-  (add-hook 'dired-sidebar-mode-hook
-            (lambda ()
-              (unless (file-remote-p default-directory)
-                (auto-revert-mode))))
-  :config
-  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
-  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+;; (use-package dired-sidebar
+;;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+;;   :ensure t
+;;   :commands (dired-sidebar-toggle-sidebar)
+;;   :init
+;;   (add-hook 'dired-sidebar-mode-hook
+;;             (lambda ()
+;;               (unless (file-remote-p default-directory)
+;;                 (auto-revert-mode))))
+;;   :config
+;;   (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+;;   (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
 
-  (setq dired-sidebar-subtree-line-prefix "+"))
+;;   (setq dired-sidebar-subtree-line-prefix "+"))
+
+(use-package speedbar
+  :ensure nil ; Built-in package
+  :bind (("C-x C-n" . my/speedbar-toggle-or-focus)
+         :map speedbar-mode-map
+         ;; Expand or collapse items with TAB
+         ("<tab>" . speedbar-toggle-line-expansion)
+         ("TAB"   . speedbar-toggle-line-expansion)
+         ;; Close speedbar window and return focus to code
+         ("q"     . quit-window))
+  :custom
+  ;; --- Emacs 31 Native Side-Window Features ---
+  (speedbar-prefer-window t)               ; Open inside the frame instead of a new OS window
+  ;; (speedbar-window-default-width 35)       ; Width of the sidebar when opened
+  ;; (speedbar-window-max-width 45)           ; Maximum allowed width
+  (speedbar-window-dedicated-window 'side) ; Protects the sidebar window from being closed by C-x 1
+
+  ;; --- Automated Content Refreshing ---
+  (speedbar-update-flag t)                 ; Dynamic updates when switching file buffers
+
+  ;; --- Structuring Code Layout with Imenu ---
+  (speedbar-tag-hierarchy-method '(speedbar-prefix-group-tag-hierarchy
+                                   speedbar-trim-words-tag-hierarchy
+                                   speedbar-simple-group-tag-hierarchy))
+
+  ;; --- Visual Cleanup ---
+  (speedbar-use-images nil)                  ; Cleaner look with text/icon fonts rather than old images
+  (speedbar-hide-button-brackets-flag t)     ; Changes cluttered bracket style <+> down to just +
+  (speedbar-show-unknown-files t)            ; Show all available files, regardless of extension extensions
+  (speedbar-smart-directory-expand-flag t)   ; Keep directory width fixed during expansions
+
+  :config
+  ;; Fallback mapping for specialized file-level context submaps inside the speedbar
+  (define-key speedbar-file-key-map (kbd "<tab>") 'speedbar-toggle-line-expansion)
+  (define-key speedbar-file-key-map (kbd "TAB") 'speedbar-toggle-line-expansion)
+
+  ;; Custom wrapper function to handle the opening and focus behavior smoothly
+  (defun my/speedbar-toggle-or-focus ()
+    "Open speedbar if closed; switch focus to it if open."
+    (interactive)
+    (if (and (boundp 'speedbar-frame)
+             (window-live-p (speedbar-window)))
+        (speedbar-get-focus)
+      (speedbar t))))
 
 ;; 10. Version Control
 (use-package magit
