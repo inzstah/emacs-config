@@ -298,7 +298,9 @@
 ;; 10. Version Control
 (use-package magit
   :ensure t
-  :bind ("C-x g" . magit-status))
+  :bind ("C-x g" . magit-status)
+  :config
+  (add-hook 'git-commit-post-finish-hook 'magit))
 
 (use-package magit-todos
   :ensure t
@@ -307,8 +309,8 @@
 (with-eval-after-load 'magit
   (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-(setq display-buffer-alist
-      '(("\\*magit:.*"
-         (display-buffer-reuse-window display-buffer-same-window)
-         (reusable-frames . visible))))
+;; (setq display-buffer-alist
+;;       '(("\\*magit:.*"
+;;          (display-buffer-reuse-window display-buffer-same-window)
+;;          (reusable-frames . visible))))
 
