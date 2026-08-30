@@ -335,4 +335,3 @@
 ;;       '(("\\*magit:.*"
 ;;          (display-buffer-reuse-window display-buffer-same-window)
 ;;          (reusable-frames . visible))))
-
