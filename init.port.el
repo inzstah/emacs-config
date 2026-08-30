@@ -13,7 +13,9 @@
 
 ;; Themes
 (use-package gruber-darker-theme
-  :ensure t)
+  :ensure t
+  :config
+  (load-theme 'gruber-darker t))
 
 ;; God Mode (Modal editing)
 (use-package god-mode
@@ -196,18 +198,28 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; 4. Themes
-(use-package gruber-darker-theme
-  :config
-  (load-theme 'gruber-darker t))
-
-;; 5. Completion (Company)
-
-(use-package company
+;; 5. Completions (corfu, preview)
+(use-package corfu
   :ensure t
-  :hook (after-init . global-company-mode)
+  :init
+  (global-corfu-mode 1)
   :config
-  (setq company-idle-delay 0.2))
+  (setq corfu-auto t
+        corfu-auto-delay 0.2
+        corfu-auto-prefix 2))
+
+;; Ghost text
+(use-package completion-preview
+  :init
+  (global-completion-preview-mode 1)
+  :config
+  (setq completion-preview-minimum-symbol-length 4
+        completion-preview-idle-delay 0.5))
+
+(use-package cape
+  :ensure t
+  :init
+  (add-hook 'completion-at-point-functions #'cape-yasnippet 90))
 
 ;; 6. LSP & Development Base
 (use-package eglot
@@ -235,8 +247,6 @@
   :config
   (smartparens-global-mode t))
 
-;; Ensure company works in eglot buffers
-(add-hook 'eglot-managed-mode-hook #'company-mode)
 (setq compilation-ask-about-save nil)
 
 (use-package project
@@ -260,6 +270,8 @@
   :bind (("C-x C-n" . my/speedbar-toggle-or-focus)
          :map speedbar-mode-map
          ("<tab>" . speedbar-toggle-line-expansion)
+	 ("<backtab>" . speedbar-up-directory)
+	 ("." . my/speedbar-toggle-dotfiles)
          ("TAB"   . speedbar-toggle-line-expansion))
   :custom
   (speedbar-prefer-window t)
@@ -293,7 +305,17 @@
     (if (and (boundp 'speedbar-frame)
              (window-live-p (speedbar-window)))
         (speedbar-get-focus)
-      (speedbar t))))
+      (speedbar t)))
+
+  (defun my/speedbar-toggle-dotfiles ()
+        "Toggle showing dotfiles and unknown-type files in speedbar."
+        (interactive)
+        (setq speedbar-show-unknown-files (not speedbar-show-unknown-files))
+        (setq speedbar-directory-unshown-regexp
+            (if speedbar-show-unknown-files
+                "^$"
+                "^\\(\\..*\\)\\'"))
+        (speedbar-refresh)))
 
 ;; 10. Version Control
 (use-package magit
