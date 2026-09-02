@@ -213,6 +213,13 @@
 (use-package completion-preview
   :init
   (global-completion-preview-mode 1)
+  :bind
+  ( :map completion-preview-active-mode-map
+    ("M-i" . completion-preview-insert-word)
+    ("M-n" . completion-preview-next-candidate)
+    ("M-p" . completion-preview-prev-candidate)
+    ("M-<return>" . completion-preview-insert)
+    ("<tab>" . completion-preview-complete))
   :config
   (setq completion-preview-minimum-symbol-length 4
         completion-preview-idle-delay 0.5))
