@@ -12,6 +12,9 @@
 (setq use-package-always-ensure t)
 
 ;; Themes
+(use-package moe-theme
+  :ensure t)
+
 (use-package gruber-darker-theme
   :ensure t
   :config
@@ -39,13 +42,24 @@
                (lambda () (derived-mode-p 'magit-mode)))
 
   ;; Dynamic visual indicator in the mode-line
-  (defun my/god-mode-update-indicator ()
-    (if god-local-mode
-        (set-face-attribute 'mode-line nil :background "GoldenRod4" :foreground "white")
-      (face-spec-reset-face 'mode-line)))
+  (defun my-god-mode-update-mode-line ()
+  (cond
+   (god-local-mode
+    (set-face-attribute 'mode-line nil
+                        :foreground "#604000"
+                        :background "#fff29a")
+    (set-face-attribute 'mode-line-inactive nil
+                        :foreground "#3f3000"
+                        :background "#fff3da"))
+   (t
+    (set-face-attribute 'mode-line nil
+                        :foreground "#0a0a0a"
+                        :background "#afd7ff")
+    (set-face-attribute 'mode-line-inactive nil
+                        :foreground "#404148"
+                        :background "#efefef"))))
 
-  (add-hook 'god-mode-enabled-hook #'my/god-mode-update-indicator)
-  (add-hook 'god-mode-disabled-hook #'my/god-mode-update-indicator)
+(add-hook 'post-command-hook #'my-god-mode-update-mode-line)
 
   ;; Translates internal shortcuts visually if you use which-key
   (with-eval-after-load 'which-key
@@ -57,6 +71,10 @@
 (menu-bar-mode 0)
 (tab-bar-mode 1)
 (global-visual-line-mode 1)
+
+(setq select-active-regions nil)
+
+(setq-default indent-tabs-mode nil)
 
 (setq kill-whole-line t)
 (setq use-short-answers t)
@@ -81,7 +99,7 @@
   :config
   (reverse-im-mode t))
 
-(set-face-attribute 'default nil :height 120)
+(set-face-attribute 'default nil :family "Iosevka Nerd Font" :height 120 :weight 'regular)
 (global-display-line-numbers-mode)
 (setq display-line-numbers-type 'relative)
 
@@ -169,13 +187,13 @@
                 (lambda (&rest _) (call-interactively 'compose-mail)) 'default)
            (nil "⚙️ Settings" "Open init.port.el"
                 (lambda (&rest _) (find-file "~/.emacs.d/init.port.el")) 'default))
-	  ((nil "🗞️ Telega" "Open telega client"
-		(lambda (&rest _) (telega)) 'default))))
+          ((nil "🗞️ Telega" "Open telega client"
+                (lambda (&rest _) (telega)) 'default))))
 
   (dashboard-setup-startup-hook)
   (setq dashboard-banner-logo-title
-	(format "Welcome to Emacs! Loaded %d packages"
-		(length package-activated-list)))
+        (format "Welcome to Emacs! Loaded %d packages"
+                (length package-activated-list)))
   (setq dashboard-startup-banner 'logo)
   (setq dashboard-projects-backend 'project-el)
   ;; (setq dashboard-center-content t)
@@ -289,8 +307,8 @@
   :bind (("C-x C-n" . my/speedbar-toggle-or-focus)
          :map speedbar-mode-map
          ("<tab>" . speedbar-toggle-line-expansion)
-	 ("<backtab>" . speedbar-up-directory)
-	 ("." . my/speedbar-toggle-dotfiles)
+         ("<backtab>" . speedbar-up-directory)
+         ("." . my/speedbar-toggle-dotfiles)
          ("TAB"   . speedbar-toggle-line-expansion))
   :custom
   (speedbar-prefer-window t)
