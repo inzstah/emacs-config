@@ -1,5 +1,5 @@
 ;;-*- lexical-binding: t; -*-
-;; 1. Package Manager Bootstrap
+;; Package Manager Bootstrap
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
@@ -42,7 +42,7 @@
   (defun my/god-mode-update-indicator ()
     (if god-local-mode
         (set-face-attribute 'mode-line nil :background "GoldenRod4" :foreground "white")
-      (face-spec-set 'mode-line (face-user-default-spec 'mode-line))))
+      (face-spec-reset-face 'mode-line)))
 
   (add-hook 'god-mode-enabled-hook #'my/god-mode-update-indicator)
   (add-hook 'god-mode-disabled-hook #'my/god-mode-update-indicator)
@@ -51,7 +51,7 @@
   (with-eval-after-load 'which-key
     (which-key-enable-god-mode-support)))
 
-;; 2. Basics & UI
+;; Basics & UI
 (setopt x-gtk-resize-child-frames 'resize)
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -151,7 +151,6 @@
   (setq dashboard-page-separator "\n\f\n")
 
   (setq dashboard-set-navigator t)
-
   (setq dashboard-startupify-list '(dashboard-insert-banner
                                     dashboard-insert-newline
                                     dashboard-insert-banner-title
@@ -174,7 +173,9 @@
 		(lambda (&rest _) (telega)) 'default))))
 
   (dashboard-setup-startup-hook)
-  (setq dashboard-banner-logo-title "Welcome to Emacs!")
+  (setq dashboard-banner-logo-title
+	(format "Welcome to Emacs! Loaded %d packages"
+		(length package-activated-list)))
   (setq dashboard-startup-banner 'logo)
   (setq dashboard-projects-backend 'project-el)
   ;; (setq dashboard-center-content t)
@@ -192,13 +193,13 @@
 
 (add-hook 'server-after-make-frame-hook 'dashboard-open)
 
-;; 3. Environment & Paths
+;; Environment & Paths
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x pgtk))
   :config
   (exec-path-from-shell-initialize))
 
-;; 5. Completions (corfu, preview)
+;; Completions (corfu, preview)
 (use-package corfu
   :ensure t
   :init
@@ -221,7 +222,7 @@
   :init
   (add-hook 'completion-at-point-functions #'cape-yasnippet 90))
 
-;; 6. LSP & Development Base
+;; LSP & Development Base
 (use-package eglot
   :ensure t
   :bind (:map eglot-mode-map
@@ -252,12 +253,12 @@
 (use-package project
   :ensure t)
 
-;; 7. Load Side Modes
+;; Load Side Modes
 (load (expand-file-name "init-prog.el" user-emacs-directory))
 (load (expand-file-name "init-org.el" user-emacs-directory))
 (load (expand-file-name "init-telega.el" user-emacs-directory))
 
-;; 8. Multiple Cursors
+;; Multiple Cursors
 (use-package multiple-cursors
   :ensure t
   :bind (("C->" . mc/mark-next-like-this)
@@ -265,7 +266,18 @@
          ("C-c C-<" . mc/mark-all-like-this)
          ("C-c m c" . mc/edit-lines)))
 
-;; 9. Speedbar
+;; Substitute
+(use-package substitute
+  :ensure t
+  :config
+  (add-hook 'substitute-post-replace-functions #'substitute-report-operation)
+  (define-key global-map (kbd "C-c s") #'substitute-prefix-map)
+  (define-key substitute-prefix-map (kbd "b") #'substitute-target-in-buffer)
+  (define-key substitute-prefix-map (kbd "d") #'substitute-target-in-defun)
+  (define-key substitute-prefix-map (kbd "r") #'substitute-target-above-point)
+  (define-key substitute-prefix-map (kbd "s") #'substitute-target-below-point))
+
+;; Speedbar
 (use-package speedbar
   :bind (("C-x C-n" . my/speedbar-toggle-or-focus)
          :map speedbar-mode-map
@@ -317,7 +329,7 @@
                 "^\\(\\..*\\)\\'"))
         (speedbar-refresh)))
 
-;; 10. Version Control
+;; Version Control
 (use-package magit
   :ensure t
   :bind ("C-x g" . magit-status)
@@ -330,8 +342,3 @@
 
 (with-eval-after-load 'magit
   (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-;; (setq display-buffer-alist
-;;       '(("\\*magit:.*"
-;;          (display-buffer-reuse-window display-buffer-same-window)
-;;          (reusable-frames . visible))))
