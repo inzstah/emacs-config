@@ -2,6 +2,8 @@
 (when (fboundp 'native-comp-available-p)
   (setq native-comp-async-jobs-number (max 1 (- (num-processors) 2))))
 
+(define-key global-map (kbd "C-c t") telega-prefix-map)
+
 (use-package tracking
   :ensure t)
 
@@ -43,6 +45,8 @@
   (setq telega-use-tracking-for '(mention))
   (setq telega-chat-fill-limit 20)
   (setq telega-view-file-method 'emacs)
+  (setq telega-root-show-avatars nil)
+  (setq telega-chat-show-avatars nil)
 
   ;; Kill preview buffer on exit
   (defun my/telega-view-clean-exit ()

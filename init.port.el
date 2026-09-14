@@ -79,6 +79,8 @@
 (setq kill-whole-line t)
 (setq use-short-answers t)
 
+(setq dired-dwim-target t)
+
 (global-whitespace-mode 1)
 (setq tab-bar-show 1)
 (setq tab-bar-new-button-show nil)
@@ -251,7 +253,7 @@
 (use-package eglot
   :ensure t
   :bind (:map eglot-mode-map
-              ("C-c l a" . eglot-code-actions)
+              ("M-RET" . eglot-code-actions)
               ("C-c l r" . eglot-rename)
               ("C-c l h" . eldoc)
               ("C-c l f" . eglot-format)
