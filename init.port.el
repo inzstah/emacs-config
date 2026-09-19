@@ -244,10 +244,29 @@
   (setq completion-preview-minimum-symbol-length 4
         completion-preview-idle-delay 0.5))
 
+(use-package yasnippet
+  :ensure t
+  :config
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+  (yas-global-mode 1)
+  (yas-reload-all))
+
+(use-package yasnippet-capf
+  :ensure t
+  :after yasnippet)
+
 (use-package cape
   :ensure t
+  :after (yasnippet-capf eglot)
   :init
-  (add-hook 'completion-at-point-functions #'cape-yasnippet 90))
+  (defun my/combo-completions ()
+    "Combine completions and snippets into one list."
+    (setq-local completion-at-point-functions
+                (list (cape-capf-super
+                       #'eglot-completion-at-point
+                       #'yasnippet-capf))))
+
+  (add-hook 'eglot-managed-mode-hook #'my/combo-completions))
 
 ;; LSP & Development Base
 (use-package eglot
