@@ -12,13 +12,15 @@
 (setq use-package-always-ensure t)
 
 ;; Themes
-(use-package moe-theme
-  :ensure t)
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 
 (use-package gruber-darker-theme
   :ensure t
-  :config
-  (load-theme 'gruber-darker t))
+  :config)
+  ;; (load-theme 'gruber-darker t))
+
+(load-theme 'geka t)
 
 ;; God Mode (Modal editing)
 (use-package god-mode
@@ -46,18 +48,12 @@
   (cond
    (god-local-mode
     (set-face-attribute 'mode-line nil
-                        :foreground "#604000"
-                        :background "#fff29a")
-    (set-face-attribute 'mode-line-inactive nil
-                        :foreground "#3f3000"
-                        :background "#fff3da"))
+                        :foreground "#fafaaa"
+                        :background "DarkGoldenRod"))
    (t
     (set-face-attribute 'mode-line nil
-                        :foreground "#0a0a0a"
-                        :background "#afd7ff")
-    (set-face-attribute 'mode-line-inactive nil
-                        :foreground "#404148"
-                        :background "#efefef"))))
+                        :foreground "#3a3a1a"
+                        :background "SkyBlue"))))
 
 (add-hook 'post-command-hook #'my-god-mode-update-mode-line)
 
@@ -70,7 +66,12 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (tab-bar-mode 1)
+(scroll-bar-mode 0)
 (global-visual-line-mode 1)
+
+(setq mouse-highlight nil)
+(setq help-at-pt-display-when-idle t)
+(setq help-at-pt-timer-delay 0.5)
 
 (setq select-active-regions nil)
 
@@ -281,7 +282,10 @@
               ("C-c l R" . eglot-reconnect)))
 
 (use-package consult
-  :ensure t)
+  :ensure t
+  :config
+  (consult-customize consult-buffer :preview-key "M-.")
+  :bind (("M-s M-b" . consult-buffer)))
 
 (use-package consult-eglot
   :ensure t
@@ -374,6 +378,28 @@
                 "^$"
                 "^\\(\\..*\\)\\'"))
         (speedbar-refresh)))
+
+;; Vterm
+(use-package vterm
+  :ensure t
+  :commands (vterm vterm-other-window)
+  :config
+  (setq vterm-kill-buffer-on-exit t)
+  :bind
+  ("C-c t" . vterm)
+  ("C-`" . vterm-other-window))
+
+;; Eshell
+(use-package eshell
+  :bind ("C-c e" . eshell)
+  :config
+  ;; Kill the buffer when you type 'exit' (matches vterm behavior)
+  (setq eshell-destroy-buffer-when-process-dies t)
+  ;; Make the prompt look a bit cleaner (optional but recommended)
+  (setq eshell-prompt-function
+        (lambda ()
+          (concat (eshell/pwd) " $ ")))
+  (setq eshell-prompt-regexp "^[^$]*\\$ "))
 
 ;; Version Control
 (use-package magit
