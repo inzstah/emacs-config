@@ -6,6 +6,21 @@
   (add-hook 'go-mode-hook (lambda ()
                             (add-hook 'before-save-hook #'gofmt-before-save nil t))))
 
+(let ((g-gopath (expand-file-name "~/.local/share/go_workspace"))
+      (g-goroot (expand-file-name "~/.local/share/go")))
+
+  (setenv "GOPATH" g-gopath)
+  (setenv "GOROOT" g-goroot)
+
+  (let ((g-bin (concat g-gopath "/bin")))
+    (when (file-directory-p g-bin)
+      (add-to-list 'exec-path g-bin)
+      (setenv "PATH" (concat g-bin path-separator (getenv "PATH"))))))
+
+(add-hook 'go-mode-hook (lambda ()
+                          (setq tab-width 4)
+                          (setq indent-tabs-mode t)))
+
 ;; Rust
 (use-package rust-mode
   :ensure t
@@ -25,7 +40,6 @@
 (use-package geiser-guile
   :ensure t
   :after geiser)
-
 
 ;; Web / HTML
 (use-package web-mode
