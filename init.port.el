@@ -48,12 +48,12 @@
   (cond
    (god-local-mode
     (set-face-attribute 'mode-line nil
-                        :foreground "#fafaaa"
-                        :background "DarkGoldenRod"))
+                        :foreground "#040444"
+                        :background "#dddd22"))
    (t
     (set-face-attribute 'mode-line nil
-                        :foreground "#3a3a1a"
-                        :background "SkyBlue"))))
+                        :foreground "#040444"
+                        :background "#66ccdd"))))
 
 (add-hook 'post-command-hook #'my-god-mode-update-mode-line)
 
@@ -177,8 +177,10 @@
                                     dashboard-insert-banner-title
                                     dashboard-insert-newline
                                     dashboard-insert-navigator
-                                    dashboard-insert-newline
                                     dashboard-insert-items
+                                    dashboard-insert-newline
+                                    dashboard-insert-init-info
+                                    dashboard-insert-newline
                                     dashboard-insert-newline
                                     dashboard-insert-footer))
 
@@ -194,9 +196,6 @@
                 (lambda (&rest _) (telega)) 'default))))
 
   (dashboard-setup-startup-hook)
-  (setq dashboard-banner-logo-title
-        (format "Welcome to Emacs! Loaded %d packages"
-                (length package-activated-list)))
   (setq dashboard-startup-banner 'logo)
   (setq dashboard-projects-backend 'project-el)
   ;; (setq dashboard-center-content t)
@@ -344,7 +343,8 @@
   (speedbar-tag-hierarchy-method '(speedbar-prefix-group-tag-hierarchy
                                    speedbar-simple-group-tag-hierarchy))
   (speedbar-use-images nil)
-  (speedbar-hide-button-brackets-flag t)
+  (speedbar-hide-button-brackets-flag nil)
+  (speedbar-track-mouse t)
   (speedbar-show-unknown-files t)
   (speedbar-smart-directory-expand-flag t)
 
