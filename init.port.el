@@ -94,6 +94,13 @@
 (global-set-key (kbd "C-z") 'undo)
 (global-set-key (kbd "<f5>") 'recompile)
 
+;; Windmove config
+;; TODO: bind to a future hyper key when I figure out xkb
+(global-set-key (kbd "C-J") #'windmove-left)
+(global-set-key (kbd "C-M") #'windmove-down)
+(global-set-key (kbd "C-I") #'windmove-up)
+(global-set-key (kbd "C-K") #'windmove-right)
+
 ;; Make sure keybindings works with russian keyboard layout
 (use-package reverse-im
   :ensure t
