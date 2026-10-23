@@ -54,6 +54,7 @@
 (tab-bar-mode 1)
 (scroll-bar-mode 0)
 (global-visual-line-mode 1)
+(repeat-mode 1)
 
 (setq mouse-highlight nil)
 (setq help-at-pt-display-when-idle t)
