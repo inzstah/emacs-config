@@ -18,7 +18,7 @@
 (use-package gruber-darker-theme
   :ensure t
   :config)
-  ;; (load-theme 'gruber-darker t))
+  ;; (load-theme 'gruber-darker t)
 
 (load-theme 'geka t)
 
@@ -35,29 +35,15 @@
 
   :config
 
-  ;; Exclude buffers that rely on single-key native commands
+  ;; Exclude buffers that use single-key commands
   (dolist (mode '(dired-mode magit-status-mode magit-log-mode magit-diff-mode))
     (add-to-list 'god-exempt-major-modes mode))
 
-  ;; Catch-all for dynamically spawned Magit sub-buffers
+  ;; Catch-all for Magit sub-buffers
   (add-to-list 'god-exempt-predicates
                (lambda () (derived-mode-p 'magit-mode)))
 
-  ;; Dynamic visual indicator in the mode-line
-  (defun my-god-mode-update-mode-line ()
-  (cond
-   (god-local-mode
-    (set-face-attribute 'mode-line nil
-                        :foreground "#040444"
-                        :background "#dddd22"))
-   (t
-    (set-face-attribute 'mode-line nil
-                        :foreground "#040444"
-                        :background "#66ccdd"))))
-
-(add-hook 'post-command-hook #'my-god-mode-update-mode-line)
-
-  ;; Translates internal shortcuts visually if you use which-key
+  ;; Translates internal shortcuts visually for which-key
   (with-eval-after-load 'which-key
     (which-key-enable-god-mode-support)))
 
@@ -96,10 +82,23 @@
 
 ;; Windmove config
 ;; TODO: bind to a future hyper key when I figure out xkb
-(global-set-key (kbd "C-J") #'windmove-left)
-(global-set-key (kbd "C-M") #'windmove-down)
-(global-set-key (kbd "C-I") #'windmove-up)
-(global-set-key (kbd "C-K") #'windmove-right)
+(global-set-key (kbd "M-J") #'windmove-left)
+(global-set-key (kbd "M-M") #'windmove-down)
+(global-set-key (kbd "M-I") #'windmove-up)
+(global-set-key (kbd "M-K") #'windmove-right)
+
+(defvar my-windmove-repeat-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "j" #'windmove-left)
+    (define-key map "m" #'windmove-down)
+    (define-key map "i" #'windmove-up)
+    (define-key map "k" #'windmove-right)
+    map))
+
+(put 'windmove-left 'repeat-map 'my-windmove-repeat-map)
+(put 'windmove-right 'repeat-map 'my-windmove-repeat-map)
+(put 'windmove-up 'repeat-map 'my-windmove-repeat-map)
+(put 'windmove-down 'repeat-map 'my-windmove-repeat-map)
 
 ;; Make sure keybindings works with russian keyboard layout
 (use-package reverse-im
@@ -297,7 +296,7 @@
   :ensure t
   :after (consult eglot)
   :bind (:map eglot-mode-map
-              ("C-c s" . consult-eglot-symbols)))
+              ("C-c x" . consult-eglot-symbols)))
 
 (use-package smartparens
   :ensure t
@@ -320,7 +319,7 @@
   :bind (("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)
-         ("C-c m c" . mc/edit-lines)))
+         ("C-c c" . mc/edit-lines)))
 
 ;; Substitute
 (use-package substitute
@@ -400,9 +399,7 @@
 (use-package eshell
   :bind ("C-c e" . eshell)
   :config
-  ;; Kill the buffer when you type 'exit' (matches vterm behavior)
   (setq eshell-destroy-buffer-when-process-dies t)
-  ;; Make the prompt look a bit cleaner (optional but recommended)
   (setq eshell-prompt-function
         (lambda ()
           (concat (eshell/pwd) " $ ")))
